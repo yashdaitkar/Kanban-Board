@@ -1,8 +1,8 @@
-const todo= document.querySelector('#todo');
-const progress= document.querySelector('#progress');
-const done=document.querySelector('#done');
+const todo = document.querySelector('#todo');
+const progress = document.querySelector('#progress');
+const done = document.querySelector('#done');
 
-console.log(todo,progress,done);
+console.log(todo, progress, done);
 
 const task= document.querySelectorAll('.task');
 
@@ -12,6 +12,27 @@ task.forEach(task => {
     })
 }) 
 
-progress.addEventListener("dragenter",(e) => {
-    progress.classList.add("hover-over");
-})
+function addDragEventOnColumn(column) {
+    column.addEventListener("dragenter",(e) => {
+        e.preventDefault();
+        column.classList.add("hover-over")
+    })
+    column.addEventListener("dragleave",(e) => {
+        e.preventDefault();
+        column.classList.remove("hover-over")
+    })
+
+    column.addEventListener('dragover', (e) => {
+        e.preventDefault();
+    })
+    
+    column.addEventListener("drop", (e) => {
+        e.preventDefault();
+        console.log("dropped", e);
+    })
+
+}
+
+addDragEventOnColumn(todo);
+addDragEventOnColumn(progress);
+addDragEventOnColumn(done);
