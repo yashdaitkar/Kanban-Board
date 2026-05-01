@@ -1,9 +1,35 @@
+let tasksData = {}
+
 const todo = document.querySelector('#todo');
 const progress = document.querySelector('#progress');
 const done = document.querySelector('#done');
+const columns = [todo, progress, done];
 let dragElement = null;
 
-console.log(todo, progress, done);
+if(localStorage.getItem("tasks")) {
+
+    const data = JSON.parse(localStorage.getItem("tasks"));
+    console.log(data);
+
+    for(const col in data){
+        const column = document.querySelector(`#${col}`);
+        data[col].forEach(task => {
+            const div = document.createElement("div");  
+            
+            div.classList.add("task");
+            div.setAttribute("draggable", "true");  
+            div.innerHTML = `
+                <h2>${task.title}</h2>
+                <p>${task.description}</p>
+                <button>Delete</button>
+            `
+            column.appendChild(div);    
+            div.addEventListener("drag", (e) => {
+                dragElement = div;
+            }) 
+    })
+    }   
+}
 
 const task= document.querySelectorAll('.task');
 
@@ -31,11 +57,25 @@ function addDragEventOnColumn(column) {
     column.addEventListener("drop", (e) => {
         e.preventDefault();
 
-
-        console.log("dropped", dragElement, column);
-
+        
         column.appendChild(dragElement);
         column.classList.remove("hover-over");
+
+        columns.forEach(col => {
+            const tasks = col.querySelectorAll(".task");
+            const count = col.querySelector(".right");
+
+            tasksData[ col.id ] = Array.from(tasks).map(t => { 
+                return {
+                    title: t.querySelector("h2").innerText,
+                    description: t.querySelector("p").innerText
+                }
+            })
+
+            localStorage.setItem("tasks", JSON.stringify(tasksData));
+            count.innerText = tasks.length;
+        })
+
 
     })
 
@@ -49,7 +89,7 @@ addDragEventOnColumn(done);
 const toggleModalButton = document.querySelector('#toggle-modal');
 const modalBg = document.querySelector(".modal .bg");
 const modal = document.querySelector('.modal');
-const addTaskButton = document.querySelector("#add-task-button");
+const addTaskButton = document.querySelector("#add-new-task");
 
 toggleModalButton.addEventListener("click",() => {
     modal.classList.toggle("active");
@@ -74,6 +114,27 @@ addTaskButton.addEventListener("click", ()=> {
         <button>Delete</button>
     `
     todo.appendChild(div);
+
+
+        columns.forEach(col => {
+            const tasks = col.querySelectorAll(".task");
+            const count = col.querySelector(".right");
+
+            tasksData[ col.id ] = Array.from(tasks).map(t => { 
+                return {
+                    title: t.querySelector("h2").innerText,
+                    description: t.querySelector("p").innerText
+                }
+            })
+
+            localStorage.setItem("tasks", JSON.stringify(tasksData));
+            count.innerText = tasks.length;
+        })
+
+
+    div.addEventListener("drag", (e) => {
+        dragElement = div;
+    })
 
     modal.classList.remove("active");
 })
