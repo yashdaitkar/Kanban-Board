@@ -23,6 +23,12 @@ function addTask(title, description, column) {
         dragElement = div;
     })
 
+    const deleteButton = div.querySelector("button");
+    deleteButton.addEventListener("click", () => {
+        div.remove();
+        updatetaskcount();
+    })
+
     return div;
 }
 
